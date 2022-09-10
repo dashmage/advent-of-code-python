@@ -22,6 +22,49 @@ def parse_input(lines):
     return drawn_nums, boards
 
 
+def check_winner(boards, board_count):
+    """Returns board_index if winning board is found. Else returns None"""
+    board_index = 0
+
+    # loop through all boards to check for winner
+    while board_index < board_count:
+        # check for completed row
+        for i in range(5):
+            for j in range(5):
+                if list(boards[board_index][i].values())[j] == False:
+                    # break and check next row
+                    break
+
+                # reached end of row
+                if j == 4:
+                    # board is winner!
+                    return board_index
+
+        # check for completed column
+        for i in range(5):
+            for j in range(5):
+                if list(boards[board_index][j].values())[i] == False:
+                    # break and check next column
+                    break
+
+                # reached end of column
+                if j == 4:
+                    # board is winner!
+                    return board_index
+        board_index += 1
+    return None
+
+
+def score(boards, board_index, num):
+    """Returns final score of winning board given board_index and last number called (num)"""
+    sum_unmarked = 0
+    for i in range(5):
+        for j in range(5):
+            if list(boards[board_index][i].values())[j] == False:
+                sum_unmarked += int(list(boards[board_index][i])[j])
+    return sum_unmarked * int(num)
+
+
 def part1(drawn_nums, boards):
     # accessed as boards[board_number][row_number][col_number]
     # list(boards[0][2])[3]             --> returns number at r2 c3 for board #0
@@ -29,7 +72,6 @@ def part1(drawn_nums, boards):
 
     board_count = len(boards)
     board_index = 0
-    win = False
 
     for num in drawn_nums:
         # mark each drawn number on all boards
@@ -40,64 +82,16 @@ def part1(drawn_nums, boards):
                         boards[board_index][i][num] = True
             board_index += 1
 
-        board_index = 0
-
-        # loop through all boards to check for winner
-        while board_index < board_count:
-            # check for completed row
-            for i in range(5):
-                for j in range(5):
-                    if list(boards[board_index][i].values())[j] == False:
-                        # break and check next row
-                        break
-
-                    # reached end of row
-                    if j == 4:
-                        # board is winner!
-                        win = True
-                        break
-                if win:
-                    break
-
-            # if winner found, don't check columns
-            # break out of board loop
-            if win:
-                break
-
-            # check for completed column
-            for i in range(5):
-                for j in range(5):
-                    if list(boards[board_index][j].values())[i] == False:
-                        # break and check next column
-                        break
-
-                    # reached end of column
-                    if j == 4:
-                        # board is winner!
-                        win = True
-                        break
-                if win:
-                    break
-
-            # if winner found, break out of board loop
-            if win:
-                break
-            board_index += 1
-
-        # if winner found, break out of drawn_nums loop
-        if win:
+        board_index = check_winner(boards, board_count)
+        # break out of loop if board_index is not None
+        # meaning winner has been found
+        if board_index:
             break
 
         board_index = 0
 
     # once winner is found, calculate sum of all unmarked numbers on that board
-    sum_unmarked = 0
-    for i in range(5):
-        for j in range(5):
-            if list(boards[board_index][i].values())[j] == False:
-                sum_unmarked += int(list(boards[board_index][i])[j])
-
-    return sum_unmarked * int(num)
+    return score(boards, board_index, num)
 
 
 def part2(drawn_nums, boards):
