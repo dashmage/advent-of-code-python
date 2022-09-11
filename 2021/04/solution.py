@@ -52,6 +52,7 @@ def check_winner(boards, board_count):
                     # board is winner!
                     return board_index
         board_index += 1
+    # No winner found after checking all boards
     return None
 
 
@@ -85,7 +86,7 @@ def part1(drawn_nums, boards):
         board_index = check_winner(boards, board_count)
         # break out of loop if board_index is not None
         # meaning winner has been found
-        if board_index:
+        if board_index is not None:
             break
 
         board_index = 0
@@ -95,4 +96,25 @@ def part1(drawn_nums, boards):
 
 
 def part2(drawn_nums, boards):
-    pass
+    for num in drawn_nums:
+        board_count = len(boards)
+        board_index = 0
+        # mark each drawn number on all boards
+        while board_index < board_count:
+            for i in range(5):
+                for j in range(5):
+                    if list(boards[board_index][i])[j] == num:
+                        boards[board_index][i][num] = True
+            board_index += 1
+
+        # delete all winning boards for drawn number
+        # with certain drawn numbers, multiple boards can be eliminated
+        while board_index is not None:
+            board_count = len(boards)
+            board_index = check_winner(boards, board_count)
+            # if winning board is found, remove it
+            if board_index is not None:
+                if len(boards) > 1:
+                    del boards[board_index]
+                else:
+                    return score(boards, 0, num)
