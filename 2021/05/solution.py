@@ -2,8 +2,9 @@
 ## https://adventofcode.com/2021
 ## day 05
 
+
 SIZE = 1000
-# from pprint import pprint as pp
+from pprint import pprint as pp
 
 
 def parse_input(lines):
@@ -28,8 +29,11 @@ def parse_input(lines):
     return vent_line_coords
 
 
-def mark_grid(grid, vent_line_coords):
-    """Mark grid positions as per horizontal or vertical vent lines coordinates"""
+def mark_grid(grid, vent_line_coords, check_diagonal=False):
+    """
+    Mark grid positions as per horizontal or vertical vent lines coordinates
+    Optional flag to check diagonal lines as well for part 2
+    """
     for coord_set in vent_line_coords:
         x1 = coord_set[0][0]
         y1 = coord_set[0][1]
@@ -44,8 +48,13 @@ def mark_grid(grid, vent_line_coords):
                     y1, y2 = y2, y1
                 # print(f"({x1}, {y1}) -> ({x2}, {y2})")
                 for y in range(y1, y2 + 1):
+                    # access x, y coords of grid as grid[y][x]
                     if grid[y][x1] == ".":
                         grid[y][x1] = 1
+                        # for aligned grid, convert int to str
+                        # comment line above and uncomment line below
+                        # but this breaks finding high_overlap
+                        # grid[y][x1] = "1"
                     else:
                         grid[y][x1] += 1
                         # print grid nicely formatted
@@ -59,11 +68,30 @@ def mark_grid(grid, vent_line_coords):
                 for x in range(x1, x2 + 1):
                     if grid[y1][x] == ".":
                         grid[y1][x] = 1
+                        # grid[y1][x] = "1"
                     else:
                         grid[y1][x] += 1
-                        # print grid nicely formatted
                         # grid[y1][x] = str(int(grid[y1][x]) + 1)
             # pp(grid)
+
+        if check_diagonal:
+            if abs(x1 - x2) == abs(y1 - y2):
+                x_inc = 1 if x2 > x1 else -1
+                y_inc = 1 if y2 > y1 else -1
+                # print(f"({x1}, {y1}) -> ({x2}, {y2})")
+
+                x, y = x1, y1
+                for _ in range(abs(x1 - x2) + 1):
+                    if grid[y][x] == ".":
+                        grid[y][x] = 1
+                        # grid[y][x] = "1"
+                    else:
+                        grid[y][x] += 1
+                        # grid[y][x] = str(int(grid[y][x]) + 1)
+                    x += x_inc
+                    y += y_inc
+            # pp(grid)
+
     return grid
 
 
@@ -75,8 +103,15 @@ def part1(vent_line_coords):
         for j in range(SIZE):
             if isinstance(grid[i][j], int) and grid[i][j] >= 2:
                 high_overlap += 1
-    print(high_overlap)
+    return high_overlap
 
 
 def part2(vent_line_coords):
-    pass
+    grid = [["." for i in range(SIZE)] for j in range(SIZE)]
+    grid = mark_grid(grid, vent_line_coords, check_diagonal=True)
+    high_overlap = 0
+    for i in range(SIZE):
+        for j in range(SIZE):
+            if isinstance(grid[i][j], int) and grid[i][j] >= 2:
+                high_overlap += 1
+    return high_overlap
