@@ -14,11 +14,16 @@ def parse_input(lines):
         ((8, 0), (0, 8)),
         ((5, 5), (8, 2))]
     """
+    # Go from "9,0 -> 9,5" to "9,0,9,5"
     vent_line_coords = [line.replace(" -> ", ",") for line in lines]
     for i, el in enumerate(vent_line_coords):
+        # "9,0,9,5" -> ["9", "0", "9", "5"]
         coords = el.split(",")
+        # tuple1 -> (9, 0)
+        # tuple2 -> (9, 5)
         tuple1 = int(coords[0]), int(coords[1])
         tuple2 = int(coords[2]), int(coords[3])
+        # Replace "9,0,9,5" with "((9, 0), (9, 5))"
         vent_line_coords[i] = tuple1, tuple2
     return vent_line_coords
 
@@ -33,6 +38,7 @@ def mark_grid(grid, vent_line_coords):
 
         # check only horizontal or vertical lines
         if x1 == x2 or y1 == y2:
+            # if line is vertical
             if x1 == x2:
                 if y1 > y2:
                     y1, y2 = y2, y1
@@ -44,6 +50,8 @@ def mark_grid(grid, vent_line_coords):
                         grid[y][x1] += 1
                         # print grid nicely formatted
                         # grid[y][x1] = str(int(grid[y][x1]) + 1)
+
+            # if line is horizontal
             if y1 == y2:
                 if x1 > x2:
                     x1, x2 = x2, x1
