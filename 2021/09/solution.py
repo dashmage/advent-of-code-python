@@ -27,7 +27,7 @@ def parse_input(lines):
 
 
 def check_low_point(i, j, r_max, c_max, arr):
-    """Check whether (i, j) location is a low point by comparing with adjacent locations. Return True if location provided is a low point"""
+    """Check whether (i, j) location is a low point by comparing with adjacent locations. Return True if location provided is a low point. Otherwise False."""
 
     curr = arr[i][j]
 
@@ -77,5 +77,29 @@ def part1(height_map, r_max, c_max):
     return sum(risk_levels)
 
 
+def basin_locations(arr, i, j, r_max, c_max):
+    """Returns locations in a basin given i, j coordinates of low-point"""
+    basin_points = []
+    checked = {"l": False, "r": False, "t": False, "b": False}
+    checked["t"] = True if i == 0 else False
+    checked["b"] = True if i == r_max else False
+    checked["l"] = True if j == 0 else False
+    checked["r"] = True if j == c_max else False
+    if not checked["l"] and arr[i][j - 1] != 9:
+        basin_points.append({i, j})
+        checked["l"] = True
+    if not checked["r"] and arr[i][j + 1] != 9:
+        basin_points.append({i, j})
+        checked["r"] = True
+
+
 def part2(height_map, r_max, c_max):
-    pass
+    low_points = []
+    # i, j co-ordinate locations of low points
+    lp_locs = []
+    for i in range(r_max):
+        for j in range(c_max):
+            if check_low_point(i, j, r_max, c_max, height_map):
+                low_points.append(height_map[i][j])
+                lp_locs.append((i, j))
+    print(lp_locs, low_points)
