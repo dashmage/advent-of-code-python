@@ -1,4 +1,4 @@
-[Advent of Code 2021](https://adventofcode.com/2021) solutions using Python.
+[Advent of Code](https://adventofcode.com) solutions using Python.
 
 Solving from CLI using [advent-cli](https://github.com/fergusch/advent-cli)
 
